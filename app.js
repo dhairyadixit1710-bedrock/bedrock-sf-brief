@@ -49,12 +49,14 @@ function navigate(delta) {
 
 const byCompany = (a, b) => a.company.localeCompare(b.company);
 
-let filteredList = PEOPLE.slice().sort(byCompany);
+PEOPLE.sort(byCompany);
+
+let filteredList = PEOPLE.slice();
 
 function applyFilter(key, btn) {
   document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  filteredList = (key === 'all' ? PEOPLE.slice() : PEOPLE.filter(p => p[key])).sort(byCompany);
+  filteredList = key === 'all' ? PEOPLE.slice() : PEOPLE.filter(p => p[key]);
   renderOverview();
 }
 
