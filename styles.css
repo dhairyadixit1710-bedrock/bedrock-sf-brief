@@ -250,6 +250,18 @@ body {
 .dot  { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.12); cursor: pointer; }
 .dot.on { background: #c8f04a; }
 
+/* Detail slide transitions */
+@keyframes slideFromRight {
+  from { transform: translateX(56px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideFromLeft {
+  from { transform: translateX(-56px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+.slide-from-right { animation: slideFromRight 0.28s ease-out; }
+.slide-from-left  { animation: slideFromLeft  0.28s ease-out; }
+
 /* Company stats */
 .cstats {
   font-size: 11px;

@@ -38,12 +38,33 @@ function go(id) {
 }
 
 function currentId() {
-  return parseInt(new URLSearchParams(window.location.search).get('id') || '', 10);
+  return parseInt(new URLSearchParams(window.location.search).get('id') || '0', 10);
+}
+
+function goDetail(id, direction) {
+  history.pushState(null, '', '?id=' + id);
+  const db = document.getElementById('db');
+  renderDetail(id);
+  db.classList.remove('slide-from-right', 'slide-from-left');
+  void db.offsetWidth; // force reflow so animation restarts
+  db.classList.add(direction >= 0 ? 'slide-from-right' : 'slide-from-left');
 }
 
 function navigate(delta) {
-  go((currentId() + delta + PEOPLE.length) % PEOPLE.length);
+  const newId = (currentId() + delta + PEOPLE.length) % PEOPLE.length;
+  goDetail(newId, delta);
 }
+
+window.addEventListener('popstate', () => {
+  const id = parseInt(new URLSearchParams(window.location.search).get('id') || '', 10);
+  if (!isNaN(id) && PEOPLE[id]) {
+    renderDetail(id);
+  } else {
+    document.getElementById('ov').style.display   = 'block';
+    document.getElementById('fbar').style.display = 'flex';
+    document.getElementById('dv').style.display   = 'none';
+  }
+});
 
 // ── Overview ─────────────────────────────────────────────────────────────────
 
@@ -148,7 +169,7 @@ function renderDetail(id) {
   document.getElementById('np').textContent = `${id + 1} of ${PEOPLE.length}`;
 
   document.getElementById('dd').innerHTML = PEOPLE.map((_, i) =>
-    `<div class="dot${i === id ? ' on' : ''}" onclick="go(${i})"></div>`
+    `<div class="dot${i === id ? ' on' : ''}" onclick="goDetail(${i}, ${i} - currentId())"></div>`
   ).join('');
 }
 
