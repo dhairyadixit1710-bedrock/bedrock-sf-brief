@@ -18,9 +18,10 @@ function initials(name) {
 function avatar(person, size) {
   const [bg, fg] = paletteFor(person.name);
   const fs = size > 55 ? 24 : 14;
-  return `<div style="width:${size}px;height:${size}px;border-radius:50%;flex-shrink:0;overflow:hidden;background:${bg};display:flex;align-items:center;justify-content:center;">
-    <span style="color:${fg};font-size:${fs}px;font-weight:600;">${initials(person.name)}</span>
-  </div>`;
+  const inner = person.photo
+    ? `<img src="${person.photo}" alt="${person.name}" style="width:100%;height:100%;object-fit:cover;">`
+    : `<span style="color:${fg};font-size:${fs}px;font-weight:600;">${initials(person.name)}</span>`;
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;flex-shrink:0;overflow:hidden;background:${bg};display:flex;align-items:center;justify-content:center;">${inner}</div>`;
 }
 
 function stackBadges(stack) {
