@@ -57,9 +57,17 @@ function applyFilter(key, btn) {
   renderOverview();
 }
 
+function truncate(text, wordLimit) {
+  if (!text) return '';
+  const words = text.split(/\s+/);
+  if (words.length <= wordLimit) return text;
+  return words.slice(0, wordLimit).join(' ') + '…';
+}
+
 function renderOverview() {
   document.getElementById('og').innerHTML = filteredList.map(person => {
     const id = PEOPLE.indexOf(person);
+    const snippet = truncate(person.aiInitiatives, 20);
     return `
       <div class="oc${person.rel ? ' rel' : ''}" onclick="go(${id})">
         <div class="otop">
@@ -71,7 +79,7 @@ function renderOverview() {
         </div>
         <div class="otit">${person.title}</div>
         <div class="sbadges">${stackBadges(person.stack || {})}</div>
-        ${person.ai ? `<div class="oai"><div class="oail">Talking Points</div>${person.ai}</div>` : ''}
+        ${snippet ? `<div class="oai"><div class="oail">AI &amp; Governance</div>${snippet}</div>` : ''}
       </div>`;
   }).join('');
 }
