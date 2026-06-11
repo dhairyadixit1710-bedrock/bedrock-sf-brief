@@ -250,6 +250,30 @@ body {
 .dot  { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.12); cursor: pointer; }
 .dot.on { background: #c8f04a; }
 
+/* Company stats */
+.cstats {
+  font-size: 11px;
+  color: #8a8f9e;
+  margin-top: 6px;
+}
+
+/* Prose paragraphs inside sections */
+.dprosa {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #c4c8d4;
+  margin-bottom: 10px;
+}
+.dprosa:last-child { margin-bottom: 0; }
+
+/* World Right Now box */
+.worldbox {
+  background: #13161b;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
 /* Badges */
 .brel {
   font-size: 11px;

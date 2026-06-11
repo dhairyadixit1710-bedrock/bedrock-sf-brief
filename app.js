@@ -46,12 +46,14 @@ function navigate(delta) {
 
 // ── Overview ─────────────────────────────────────────────────────────────────
 
-let filteredList = PEOPLE.slice();
+const byCompany = (a, b) => a.company.localeCompare(b.company);
+
+let filteredList = PEOPLE.slice().sort(byCompany);
 
 function applyFilter(key, btn) {
   document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  filteredList = key === 'all' ? PEOPLE.slice() : PEOPLE.filter(p => p[key]);
+  filteredList = (key === 'all' ? PEOPLE.slice() : PEOPLE.filter(p => p[key])).sort(byCompany);
   renderOverview();
 }
 
@@ -80,6 +82,9 @@ function renderDetail(id) {
   const person = PEOPLE[id];
   document.title = `${person.name} — Bedrock SF Brief`;
 
+  const pronoun = person.pronoun || 'he';
+  const heShe = pronoun.charAt(0).toUpperCase() + pronoun.slice(1);
+
   const badges = [
     person.rel ? '<span class="brel">Existing Rel</span>' : '',
     person.mit ? '<span class="bmit">MIT</span>'         : '',
@@ -89,30 +94,31 @@ function renderDetail(id) {
     ? `<div class="relbanner"><b>★ Existing Relationship</b>${person.relNote ? ' — ' + person.relNote : ''}</div>`
     : '';
 
-  const talkingPoints = person.ai
-    ? `<div class="sec">
-        <div class="stit">Talking Points</div>
-        <div class="aibox"><div class="ail2">AI Insight</div>${person.ai}</div>
-      </div>`
-    : '';
+  const stats = [
+    person.employees ? `${person.employees} employees` : '',
+    person.revenue   ? `${person.revenue} revenue`     : '',
+  ].filter(Boolean).join(' · ');
 
-  const background = person.background?.length
-    ? `<div class="sec">
-        <div class="stit">Background</div>
-        <ul class="bl">${person.background.map(b => `<li>${b}</li>`).join('')}</ul>
-      </div>`
-    : '';
+  const section = (title, html) =>
+    `<div class="sec"><div class="stit">${title}</div>${html}</div>`;
 
-  const connections = person.connections?.length
-    ? `<div class="sec">
-        <div class="stit">Connections</div>
-        ${person.connections.map(c => `
-          <div class="cc">
-            <div class="cw"><div class="cdot"></div>${c.who}</div>
-            <div class="cy">${c.how}</div>
-          </div>`).join('')}
-      </div>`
-    : '';
+  const bullets = arr =>
+    `<ul class="bl">${arr.map(b => `<li>${b}</li>`).join('')}</ul>`;
+
+  const prose = text =>
+    text.split('\n\n').map(p => `<p class="dprosa">${p}</p>`).join('');
+
+  const whoSection = person.whoTheyAre?.length
+    ? section(`Who ${heShe} Is`, bullets(person.whoTheyAre)) : '';
+
+  const aiSection = person.aiInitiatives
+    ? section('AI, Governance &amp; Data Initiatives', `<div class="aibox">${prose(person.aiInitiatives)}</div>`) : '';
+
+  const worldSection = person.worldRightNow
+    ? section('Their World Right Now', `<div class="worldbox">${prose(person.worldRightNow)}</div>`) : '';
+
+  const painSection = person.painPoints?.length
+    ? section('Their Likely Pain Points', bullets(person.painPoints)) : '';
 
   document.getElementById('db').innerHTML = relBanner + `
     <div class="ch">
@@ -122,10 +128,11 @@ function renderDetail(id) {
         <div class="dt">${person.title}</div>
         <div class="dc">${person.company}</div>
         <div class="dbadges">${badges}${stackBadges(person.stack || {})}</div>
+        ${stats ? `<div class="cstats">${stats}</div>` : ''}
         ${person.li ? `<a class="lil" href="${person.li}" target="_blank">LinkedIn ↗</a>` : ''}
       </div>
     </div>
-    ${talkingPoints}${background}${connections}`;
+    ${whoSection}${aiSection}${worldSection}${painSection}`;
 
   document.getElementById('np').textContent = `${id + 1} of ${PEOPLE.length}`;
 
