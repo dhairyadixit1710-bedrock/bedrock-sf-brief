@@ -149,6 +149,20 @@ function renderDetail(id) {
   ).join('');
 }
 
+// ── Swipe (mobile) ───────────────────────────────────────────────────────────
+
+(function () {
+  let startX = 0;
+  const THRESHOLD = 50;
+  const el = document.getElementById('dv');
+  el.addEventListener('touchstart', e => { startX = e.changedTouches[0].clientX; }, { passive: true });
+  el.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) < THRESHOLD) return;
+    navigate(dx < 0 ? 1 : -1);
+  }, { passive: true });
+})();
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 const idParam = new URLSearchParams(window.location.search).get('id');
